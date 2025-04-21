@@ -1,0 +1,21 @@
+{
+  "name": "betterx-backend",
+  "version": "1.0.0",
+  "description": "It's the backend folder for my betterX social media app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "betterX",
+    "guddu",
+    "mern"
+  ],
+  "author": "Guddu Shakar Paul",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2"
+  }
+}

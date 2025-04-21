@@ -70,3 +70,52 @@ export const registerUser = async (req, res) => {
         throw new ApiError(500, "Something went wrong, please try again")
     }
 }
+
+export const loginUser = async (req, res) => {
+    const {email, password, username} = req.body;
+
+    try{
+        if(!password || (!email && !username)) {
+            throw new ApiError(400, "Email or username and password are required");
+        }
+
+        const user = await User.findOne({
+            $or: [{email}, {username}]
+        }).select('-refreshToken -otp');
+
+        if(!user){
+            throw new ApiError(400, "Invalid credentials");
+        }
+
+        const isPasswordMatched = await user.comparePassword(password);
+
+        if(!isPasswordMatched) {
+            throw new ApiError(400, "Invalid credentials");
+        }
+
+        if (!user.isVerified) {
+          throw new ApiError(
+            400,
+            "Email not verified. Please verify your email to login"
+          );
+        }
+
+        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+
+        return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(200, user, "User logged in successfully")
+        )
+    }catch (err) {
+        console.error("Something went wrong in login user", err);
+        throw new ApiError(500, "Something went wrong");
+    }
+}

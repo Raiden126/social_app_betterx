@@ -21,6 +21,7 @@ const userSchema = new Schema({
     },
     firstname: {
         type: String,
+        required: ["Firstname is required", true],
         trim: true,
         minlength: 3,
         maxlength: 20,
@@ -28,6 +29,7 @@ const userSchema = new Schema({
     },
     lastname: {
         type: String,
+        required: ["Lastname is required", true],
         trim: true,
         minlength: 3,
         maxlength: 20,
@@ -55,14 +57,23 @@ const userSchema = new Schema({
         type: String,
         default: ""
     },
+    otp: {
+        type: Number,
+        default: null,
+        expiresIn: 300
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
     isAdmin: {
         type: Boolean,
         default: false
     },
+    refreshToken: {
+        type: String
+    }
 }, {timestamps: true});
-
-userSchema.index({ email: 1 }, { unique: true });
-userSchema.index({ username: 1 }, { unique: true });
 
 userSchema.pre('save', async function (next) {
     if(!this.isModified('password')) return next();

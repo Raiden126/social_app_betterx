@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
-import {userModel} from "../model/user.model.js";
+import {User} from "../model/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 export async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -9,20 +11,20 @@ export async function authMiddleware(req, res, next) {
   const token = tokenFromHeader || tokenFromCookie;
 
   if (!token) {
-    return res.status(401).json({ message: "No token provided or bad format" });
+    throw new ApiError(401, "No token provided or bad format");
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWTSECRET);
     
-    const user = await userModel.findById(decoded.id).select("-password -refreshToken -otp");
+    const user = await User.findById(decoded.id).select("-password -refreshToken -otp");
 
     if (!user){
-        return res.status(401).json({message: "User not found"});
+        throw new ApiError(401, "User not found");
     }
     req.user = user;
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid or expired token" });
+    throw new ApiError(401, "Invalid or expired token");
   }
 }

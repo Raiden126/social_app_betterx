@@ -47,25 +47,9 @@ const userSchema = new Schema({
         type: String,
         default: ""
     },
-    followers: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    following: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    posts: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Post'
-    }],
     savedPosts: [{
         type: Schema.Types.ObjectId,
         ref: 'Post'
-    }],
-    notifications: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Notification'
     }],
     avatar: {
         type: String,

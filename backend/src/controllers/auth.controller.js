@@ -1,6 +1,8 @@
-import User from "../model/user.model.js";
+import { sendEmail } from "../config/sendEmail.js";
+import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { generateOTP } from "../utils/GenerateOtp.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -35,6 +37,8 @@ export const registerUser = async (req, res) => {
         if(existingUser) {
             throw new ApiError(400, "User already exists");
         }
+
+        const {otp, expiresAt} = generateOTP();
     
         const user = await User.create({
             firstname,
@@ -42,7 +46,8 @@ export const registerUser = async (req, res) => {
             email,
             username,
             password,
-            isVerified: true
+            isVerified: true,
+            otp: {code: otp, expiresAt}
         })
     
         const createdUser = await User.findById(user._id).select("-password -refreshToken -otp");
@@ -51,6 +56,12 @@ export const registerUser = async (req, res) => {
             throw new ApiError(500, "Something went wrong while registering the user");
         }
         
+        await sendEmail(
+            email,
+            'Your Otp Code',
+            `Hi ${firstname},\n\nYour OTP is ${otp}. It expires in 10 minutes.`
+        );
+
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
 
         const options = {

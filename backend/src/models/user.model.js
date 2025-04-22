@@ -21,17 +21,13 @@ const userSchema = new Schema({
     },
     firstname: {
         type: String,
-        required: ["Firstname is required", true],
         trim: true,
-        minlength: 3,
         maxlength: 20,
         default: ""
     },
     lastname: {
         type: String,
-        required: ["Lastname is required", true],
         trim: true,
-        minlength: 3,
         maxlength: 20,
         default: ""
     },
@@ -53,7 +49,7 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Post'
     }],
-    avatar: {
+    coverImage: {
         type: String,
         default: ""
     },

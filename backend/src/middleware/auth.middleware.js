@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import {User} from "../models/user.model.js";
+import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -15,7 +15,7 @@ export async function authMiddleware(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWTSECRET);
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
     
     const user = await User.findById(decoded.id).select("-password -refreshToken -otp");
 

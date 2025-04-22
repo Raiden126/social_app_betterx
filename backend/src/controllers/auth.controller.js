@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { generateOTP } from "../utils/GenerateOtp.js";
 
-const generateAccessAndRefreshToken = async (userId) => {
+export const generateAccessAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         const accessToken = await user.generateAccessToken();
@@ -61,23 +61,52 @@ export const registerUser = async (req, res) => {
             'Your Otp Code',
             `Hi ${firstname},\n\nYour OTP is ${otp}. It expires in 10 minutes.`
         );
-
-        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
-
-        const options = {
-            httpOnly: true,
-            secure: true
-        }
     
         return res
         .status(201)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
         .json(
-            new ApiResponse(200, createdUser, "User registered successfully")
+            new ApiResponse(200, createdUser, "OTP sent successfully")
         )
     } catch (error) {
         console.error("Something went wrong in register user", error)
+        throw new ApiError(500, "Something went wrong, please try again")
+    }
+}
+
+export const verifyUser = async (req, res) => {
+    const {otp, email} = req.body;
+
+    try {
+        if(!otp) {
+            throw new ApiError(400, "OTP is required");
+        }
+
+        const user = await User.findOne({ email });
+        if(!user) {
+            throw new ApiError(400, "User not found");
+        }
+
+        if(user.otp.code !== otp) {
+            throw new ApiError(400, "Invalid OTP");
+        }
+
+        const currentTime = new Date();
+        if(user.otp.expiresAt < currentTime) {
+            throw new ApiError(400, "OTP expired. Please request a new OTP");
+        }
+
+        user.isVerified = true;
+        user.otp.code = null;
+        user.otp.expiresAt = null;
+        await user.save({validateBeforeSave: false});
+
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(200, null, "User verified successfully")
+        )
+    } catch (error) {
+        console.error("Something went wrong in verify user", error)
         throw new ApiError(500, "Something went wrong, please try again")
     }
 }
@@ -127,6 +156,30 @@ export const loginUser = async (req, res) => {
         )
     }catch (err) {
         console.error("Something went wrong in login user", err);
+        throw new ApiError(500, "Something went wrong");
+    }
+}
+
+export const logoutUser = async (req, res) => {
+    try{
+        const user = req.user;
+        user.refreshToken = null;
+        await user.save({validateBeforeSave: false});
+
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+
+        return res
+        .status(200)
+        .cookie("accessToken", "", options)
+        .cookie("refreshToken", "", options)
+        .json(
+            new ApiResponse(200, null, "User logged out successfully")
+        )
+    }catch (err) {
+        console.error("Something went wrong in logout user", err);
         throw new ApiError(500, "Something went wrong");
     }
 }

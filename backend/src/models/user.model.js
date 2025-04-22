@@ -6,14 +6,12 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: ["Email is required", true],
-        unique: ["Email already exists", true],
         trim: true,
         lowercase: true,
     },
     username: {
         type: String,
         required: ["Username is required", true],
-        unique: ["Username already exists", true],
         trim: true,
         minlength: 3,
         maxlength: 20,
@@ -35,7 +33,7 @@ const userSchema = new Schema({
         type: String,
         required: ["Password is required", true],
         minlength: 6,
-        maxlength: 20,
+        maxlength: 60,
     },
     bio: {
         type: String,
@@ -73,6 +71,10 @@ const userSchema = new Schema({
     },
     refreshToken: {
         type: String
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
 }, {timestamps: true});
 

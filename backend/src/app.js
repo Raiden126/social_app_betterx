@@ -5,7 +5,8 @@ import passport from "passport";
 import session from "express-session";
 
 import "./config/passport.js";
-import userRoutes from './routes/auth.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js'
 
 const app = express();
 
@@ -25,7 +26,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/users', userRoutes);
+app.use('/api/users', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

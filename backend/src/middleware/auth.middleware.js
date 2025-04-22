@@ -11,7 +11,7 @@ export async function authMiddleware(req, res, next) {
   const token = tokenFromHeader || tokenFromCookie;
 
   if (!token) {
-    throw new ApiError(401, "No token provided or bad format");
+    return res.status(401).json(new ApiError(401, "No token provided or bad format"));
   }
 
   try {
@@ -20,11 +20,11 @@ export async function authMiddleware(req, res, next) {
     const user = await User.findById(decoded.id).select("-password -refreshToken -otp");
 
     if (!user){
-        throw new ApiError(401, "User not found");
+        return res.status(401).json(new ApiError(401, "User not found"));
     }
     req.user = user;
     next();
   } catch (err) {
-    throw new ApiError(401, "Invalid or expired token");
+    return res.status(401).json(new ApiError(401, "Invalid or expired token"));
   }
 }

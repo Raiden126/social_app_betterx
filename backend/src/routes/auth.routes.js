@@ -6,6 +6,10 @@ import {
   logoutUser,
   verifyUser,
   generateAccessAndRefreshToken,
+  resendOTP,
+  forgotpassword,
+  resetPassword,
+  changePassword,
 } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
@@ -62,8 +66,13 @@ router.get(
   }
 );
 
+router.post("/resend-otp", resendOTP);
+router.post("/forgot-password", forgotpassword);
+router.post("/reset-password", resetPassword);
+
 router.use(authMiddleware);
 
 router.post("/logout", logoutUser);
+router.post('/change-password', changePassword);
 
 export default router;

@@ -1,10 +1,11 @@
 import dotenv from "dotenv";
 import { app } from "./app.js";
 import { connectDB } from "./db/index.js";
-import { cleanupExpiredOTPs } from "./config/cleanupExpiredOTPs.js";
+import { cleanupExpiredOTPs, cleanupExpiredResetTokens } from "./config/cleanupExpiredOTPs.js";
 
 dotenv.config();
 cleanupExpiredOTPs();
+cleanupExpiredResetTokens();
 
 const PORT = process.env.PORT || 3000;
 

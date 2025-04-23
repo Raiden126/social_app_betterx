@@ -61,6 +61,16 @@ const userSchema = new Schema({
             default: null
         }
     },
+    resetPasswordToken: {
+        token: {
+            type: String,
+            default: null
+        },
+        expiresAt: {
+            type: Date,
+            default: null
+        }
+    },
     isVerified: {
         type: Boolean,
         default: false
@@ -108,6 +118,21 @@ userSchema.methods.generateRefreshToken = async function () {
     process.env.JWT_REFRESH_TOKEN,
         { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN }
     )
+}
+
+userSchema.methods.generateResetToken = async function () {
+    const token = jwt.sign({
+        id: this._id
+    },
+    process.env.JWT_RESET_TOKEN,
+        { expiresIn: process.env.JWT_RESET_TOKEN_EXPIRES_IN }
+    )
+
+    this.resetPasswordToken.token = token;
+    this.resetPasswordToken.expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+    await this.save({ validateBeforeSave: false });
+
+    return token;
 }
 
 const User = model("User", userSchema);

@@ -17,3 +17,20 @@ export const cleanupExpiredOTPs = () => {
         }
     });
 };
+
+export const cleanupExpiredResetTokens = () => {
+    cron.schedule('*/10 * * * *', async () => {
+      const now = new Date();
+      try {
+        const result = await User.updateMany(
+          { "resetPasswordToken.expiresAt": { $lt: now } },
+          { $set: { 'resetPasswordToken.token': null, 'resetPasswordToken.expiresAt': null } }
+        );
+        if (result.modifiedCount > 0) {
+          console.log(`Cleaned up ${result.modifiedCount} expired reset tokens`);
+        }
+      } catch (err) {
+        console.error('Error cleaning expired reset tokens:', err.message);
+      }
+    });
+};

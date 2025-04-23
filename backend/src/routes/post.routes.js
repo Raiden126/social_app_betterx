@@ -1,16 +1,21 @@
 import express from "express";
-import passport from "passport";
-import { createPost } from "../controllers/post.controller.js";
+import {
+  createPost,
+  getUserPosts,
+  deletePost,
+  getPostById,
+  updatePost,
+} from "../controllers/post.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import { upload } from "../middleware/multer.middleware.js";
+import { uploadPostMedia, upload } from "../middleware/multer.middleware.js";
 
 const router = express.Router();
 
 router.use(authMiddleware);
-router.post(
-  "/create-post",
-  upload.single("contentUrl"),
-  createPost
-);
+router.post("/create-post", uploadPostMedia, createPost);
+router.get("/get-posts", getUserPosts);
+router.delete("/delete-post/:post_id", deletePost);
+router.get("/get-post-by-id", getPostById);
+router.post("/update-post/:post_id", upload.none(), updatePost);
 
 export default router;

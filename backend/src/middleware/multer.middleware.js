@@ -44,3 +44,7 @@ export const uploadUserMedia = upload.fields([
   { name: "profilePicture", maxCount: 1 },
   { name: "coverImage", maxCount: 1 },
 ]);
+
+export const uploadPostMedia = upload.fields([
+  { name: "contentUrl", maxCount: 10 },
+]);

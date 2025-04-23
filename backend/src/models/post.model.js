@@ -18,7 +18,7 @@ const postSchema = new Schema({
     trim: true,
   },
   content: {
-    type: String,
+    type: [String],
     default: "",
   },
 });

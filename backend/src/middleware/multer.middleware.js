@@ -26,7 +26,7 @@ const storage = new CloudinaryStorage({
 });
 
 // Multer upload configuration
-const upload = multer({
+export const upload = multer({
   storage,
   limits: {
     fileSize: MAX_FILE_SIZE,
@@ -44,6 +44,3 @@ export const uploadUserMedia = upload.fields([
   { name: "profilePicture", maxCount: 1 },
   { name: "coverImage", maxCount: 1 },
 ]);
-
-// If you want to use the generic upload export as well (optional)
-export default upload;

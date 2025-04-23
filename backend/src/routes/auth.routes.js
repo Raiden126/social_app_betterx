@@ -12,6 +12,7 @@ import {
   changePassword,
 } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
+import { refreshTokenMiddleware } from "../middleware/refreshToken.midlleware.js";
 
 const router = express.Router();
 
@@ -69,6 +70,8 @@ router.get(
 router.post("/resend-otp", resendOTP);
 router.post("/forgot-password", forgotpassword);
 router.post("/reset-password", resetPassword);
+
+router.post('/refresh-token', refreshTokenMiddleware);
 
 router.use(authMiddleware);
 

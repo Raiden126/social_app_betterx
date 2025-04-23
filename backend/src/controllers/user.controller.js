@@ -1,3 +1,4 @@
+import multer from "multer";
 import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -38,15 +39,19 @@ export const deleteUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     try{
       const { id } = req.user;
-      const { firstname, lastname, bio, profilePicture, coverImage } = req.body;
+      const { firstname, lastname, bio } = req.body;
 
       if (!id) {
         return res.status(401).json(new ApiError(401, "Id is not present"));
       }
 
+      if(!firstname && !lastname && !bio && !req.files) {
+        return res.status(400).json(new ApiError(400, "No fields to update"));
+      }
+
       const user = await User.findById(id);
       if (!user) {
-        return res.status(402).json(new ApiError(402, "The user not found"));
+        return res.status(404).json(new ApiError(404, "The user not found"));
       }
 
       if (firstname !== undefined) user.firstname = firstname;
@@ -68,6 +73,9 @@ export const updateUser = async (req, res) => {
         .json(new ApiResponse(200, "User updated successfully"));
     }catch (error) {
         console.log('error in updateUser', error.message);
+        if (error instanceof multer.MulterError) {
+          return res.status(400).json(new ApiError(400, error.message));
+        }
         return res
         .status(500)
         .json(new ApiResponse(500, 'Something went wrong, please try again'));

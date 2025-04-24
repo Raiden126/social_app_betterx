@@ -8,6 +8,7 @@ import "./config/passport.js";
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js'
 import postRoutes from "./routes/post.routes.js";
+import followRoutes from './routes/follow.routes.js';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(passport.session());
 app.use('/api/users', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use("/api/post", postRoutes);
+app.use('/api/follow', followRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

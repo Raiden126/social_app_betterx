@@ -198,6 +198,10 @@ export const replyToComment = async (req, res) => {
             return res.status(404).json(new ApiError(404, 'Parent comment not found'));
         }
 
+        if (parentComment.replies.length > 0) {
+            return res.status(400).json(new ApiError(400, "Replies to replies are not allowed"));
+        }
+
         const newReply = await Comment.create({ user: userId, post: parentComment.post, text });
 
         parentComment.replies.push(newReply._id);

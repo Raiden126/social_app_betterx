@@ -31,7 +31,7 @@ export const createPost = async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, "Post created successfully", newPost));
+      .json(new ApiResponse(200, newPost, "Post created successfully"));
   } catch (error) {
     console.error("error in createPost", error.message);
     if (error instanceof multer.MulterError) {
@@ -54,12 +54,12 @@ export const getUserPosts = async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, "Posts fetched successfully", posts));
+      .json(new ApiResponse(200, posts, "Posts fetched successfully"));
   } catch (error) {
     console.error("error in getUserPosts", error.message);
     return res
       .status(500)
-      .json(new ApiResponse(500, "Something went wrong while fetching posts"));
+      .json(new ApiError(500, "Something went wrong while fetching posts"));
   }
 };
 
@@ -105,12 +105,12 @@ export const deletePost = async (req, res) => {
 
       return res
         .status(200)
-        .json(new ApiResponse(200, "Post deleted successfully"));
+        .json(new ApiResponse(200, null, "Post deleted successfully"));
     } catch (error) {
         console.error("error in deletePost", error.message);
         return res
         .status(500)
-        .json(new ApiResponse(500, "Something went wrong while deleting post"));
+        .json(new ApiError(500, "Something went wrong while deleting post"));
     }
 }
 
@@ -131,12 +131,12 @@ export const getPostById = async (req, res) => {
     
         return res
         .status(200)
-        .json(new ApiResponse(200, "Post fetched successfully", post));
+        .json(new ApiResponse(200, post, "Post fetched successfully"));
     } catch (error) {
         console.error("error in getPostById", error.message);
         return res
         .status(500)
-        .json(new ApiResponse(500, "Something went wrong while fetching post"));
+        .json(new ApiError(500, "Something went wrong while fetching post"));
     }
 }
 
@@ -165,11 +165,11 @@ export const updatePost = async (req, res) => {
     
         return res
             .status(200)
-            .json(new ApiResponse(200, "Post updated successfully", post));
+            .json(new ApiResponse(200, post, "Post updated successfully"));
     } catch (error) {
         console.error("error in updatePost", error.message);
         return res
             .status(500)
-            .json(new ApiResponse(500, "Something went wrong while updating post"));
+            .json(new ApiError(500, "Something went wrong while updating post"));
     }
 }

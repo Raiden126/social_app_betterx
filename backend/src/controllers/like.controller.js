@@ -27,7 +27,7 @@ export const reactToPost = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    return res.status(200).json(new ApiResponse(200, 'Like updated', reaction));
+    return res.status(200).json(new ApiResponse(200, reaction, 'Like updated'));
   } catch (err) {
     console.log('something went wrong in reactToPost:', err.message)
     return res.status(500).json(new ApiError(500, 'Something went wrong'));
@@ -49,7 +49,9 @@ export const removeReaction = async (req, res) => {
       return res.status(404).json(new ApiError(404, 'Like not found'));
     }
 
-    res.status(200).json(new ApiResponse(200, 'Like removed successfully'));
+    res
+      .status(200)
+      .json(new ApiResponse(200, null, "Like removed successfully"));
   } catch (err) {
     console.error('something went wrong in removeReaction', err.message);
     return res.status(500).json(new ApiError(500, 'Something went wrong'));
@@ -75,7 +77,7 @@ export const getPostReactions = async (req, res) => {
       return acc;
     }, {});
 
-    return res.status(200).json(new ApiResponse(200, 'Reactions fetched successfully', grouped));
+    return res.status(200).json(new ApiResponse(200, grouped, 'Reactions fetched successfully'));
   } catch (err) {
     console.error('something went wrong in getPostReactions:', err.message);
     return res.status(500).json(new ApiError(500, 'something went wrong'));

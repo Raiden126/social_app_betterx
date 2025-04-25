@@ -229,7 +229,7 @@ export const resendOTP = async (req, res) => {
             `Hi ${user.firstname || ''},\n\nYour OTP is ${otp}. It expires in 10 minutes.`
         );
 
-        return res.status(200).json(new ApiResponse(200, 'OTP send successfully'))
+        return res.status(200).json(new ApiResponse(200, null, 'OTP send successfully'))
     } catch (error) {
         console.error('Something went wrong in resendOTP', error.message);
         return res.status(500).json(new ApiError(500, 'Something went wrong, please try again'))
@@ -259,7 +259,7 @@ export const forgotpassword = async (req, res) => {
         `Hi ${user.firstname || 'User'},\n\nClick the link below to reset your password:\n${resetLink}\n\nIf you didn’t request this, you can ignore this email.`
         );
 
-        return res.status(200).json(new ApiResponse(200, 'Email Sent Successfully'))
+        return res.status(200).json(new ApiResponse(200, null, 'Email Sent Successfully'))
     } catch (error) {
         console.error('Something went wrong in the forgotpassword', error.message);
         return res.status(500).json(new ApiError(500, 'Something went wrong, please try again'))
@@ -301,7 +301,9 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordToken.expiresAt = null;
         await user.save();
     
-        return res.status(200).json(new ApiResponse(200, 'Password reset successfully'));
+        return res
+          .status(200)
+          .json(new ApiResponse(200, null, "Password reset successfully"));
     } catch (error) {
       console.error('Error in resetPassword:', error.message);
       return res.status(500).json(new ApiError(500, 'Something went wrong. Try again.'));
@@ -331,7 +333,9 @@ export const changePassword = async (req, res) => {
         user.password = newPassword;
         await user.save();
 
-        return res.status(200).json(new ApiResponse(200, 'Password changed successfully'))
+        return res
+          .status(200)
+          .json(new ApiResponse(200, null, "Password changed successfully"));
     } catch (error) {
         console.error('Something went wrong in change password', error.message);
         return res.status(500).json(new ApiError(500, 'Something went wrong. Try again.'));

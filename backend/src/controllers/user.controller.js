@@ -26,13 +26,13 @@ export const deleteUser = async (req, res) => {
         return res
         .status(200)
         .json(
-            new ApiResponse(200, 'User deleted successfully')
+            new ApiResponse(200, null, 'User deleted successfully')
         )
     } catch (error) {
         console.log('error in deleteUser', error.message);
         return res
         .status(500)
-        .json(new ApiResponse(500, 'Something went wrong, please try again'));
+        .json(new ApiError(500, 'Something went wrong, please try again'));
     }
 }
 
@@ -70,7 +70,7 @@ export const updateUser = async (req, res) => {
 
       return res
         .status(200)
-        .json(new ApiResponse(200, "User updated successfully"));
+        .json(new ApiResponse(200, null, "User updated successfully"));
     }catch (error) {
         console.log('error in updateUser', error.message);
         if (error instanceof multer.MulterError) {
@@ -78,6 +78,6 @@ export const updateUser = async (req, res) => {
         }
         return res
         .status(500)
-        .json(new ApiResponse(500, 'Something went wrong, please try again'));
+        .json(new ApiError(500, 'Something went wrong, please try again'));
     }
 }

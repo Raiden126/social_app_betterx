@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
-import { Github, Lasso, Loader2, ShieldCheck } from "lucide-react"
+import { Github, Loader2, ShieldCheck } from "lucide-react"
 import { authService } from "@/services/authService"
 import { oauthService } from "@/services/oauthService"
 

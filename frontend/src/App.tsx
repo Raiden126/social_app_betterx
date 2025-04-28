@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import SignUp from "./pages/auth/SignUp"
 import Login from "./pages/auth/Login"
+import HomePage from "./pages/home/HomePage";
 import { Toaster } from "@/components/ui/toaster";
-import Sidebar from "./components/common/Sidebar";
+// import Sidebar from "./components/common/Sidebar";
 import ResetPassword from "./pages/auth/ResetPasswordPage";
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/" element={<Sidebar />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </Router>
       <Toaster />

@@ -14,7 +14,11 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
 
 export const loginUser = async (userData: LoginData): Promise<AuthResponse> => {
   try {
-    const response = await axiosInstance.post<AuthResponse>('/users/login', userData);
+    const response = await axiosInstance.post<AuthResponse>(
+      "/users/login",
+      userData,
+      { withCredentials: true }
+    );
     return response.data;
   } catch (error: any) {
     throw error.response?.data || error.message;
@@ -41,7 +45,11 @@ export const resetPassword = async (userData: ResetPasswordData): Promise<AuthRe
 
 export const verifyOtp = async (otp: string, email: string): Promise<AuthResponse> => {
   try {
-    const response = await axiosInstance.post<AuthResponse>('/users/verify-user', { otp, email });
+    const response = await axiosInstance.post<AuthResponse>(
+      "/users/verify-user",
+      { otp, email },
+      { withCredentials: true }
+    );
     return response.data;
   } catch (error: any) {
     throw error.response?.data || error.message;

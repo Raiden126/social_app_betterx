@@ -4,16 +4,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Github, Loader2, ShieldCheck } from "lucide-react"
 import { authService } from "@/services/authService"
 import { useToast } from "@/components/ui/use-toast"
+import { VerifyOtpForm } from "./VerifyOtpForm"
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const navigate = useNavigate()
   const { toast } = useToast()
   const [formData, setFormData] = useState({
     username: "",
@@ -25,6 +25,8 @@ export function SignupForm({
   })
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showVerifyOtp, setShowVerifyOtp] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -66,12 +68,26 @@ export function SignupForm({
         title: "Success",
         description: "Registration successful! Please check your email for OTP.",
       });
-      navigate("/verify-otp", { state: { email } });
+      setRegisteredEmail(email);
+      setShowVerifyOtp(true);
     } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to register",
+        variant: "destructive",
+      });
       setErrorMessage(err.message || "Something went wrong.")
     } finally {
       setLoading(false)
     }
+  }
+
+  if (showVerifyOtp) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <VerifyOtpForm email={registeredEmail} />
+      </div>
+    )
   }
 
   return (
@@ -86,10 +102,6 @@ export function SignupForm({
                   Join Acme Inc to unlock all features
                 </p>
               </div>
-
-              {errorMessage && (
-                <div className="text-sm text-red-500 text-center">{errorMessage}</div>
-              )}
 
               <div className="grid gap-2">
                 <Label htmlFor="username">Username</Label>
@@ -149,7 +161,7 @@ export function SignupForm({
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="password"
                   value={formData.password}
                   onChange={handleChange}
                   required
@@ -162,7 +174,7 @@ export function SignupForm({
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
@@ -176,6 +188,10 @@ export function SignupForm({
                   "Sign Up"
                 )}
               </Button>
+
+              {errorMessage && (
+                <div className="text-sm text-red-500 text-center">{errorMessage}</div>
+              )}
 
               <div className="relative flex items-center justify-center">
                 <div className="absolute left-0 right-0 border-t" />

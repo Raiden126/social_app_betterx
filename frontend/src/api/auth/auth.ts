@@ -1,5 +1,5 @@
 import axiosInstance from "@/utils/axiosInstance";
-import { LoginData, RegisterData, AuthResponse } from "@/types/auth";
+import { LoginData, RegisterData, AuthResponse, ForgotPasswordData, ResetPasswordData } from "@/types/auth";
 
 const API_BASE = import.meta.env.VITE_REACT_APP_API_ENDPOINT + "/api/users";
 
@@ -20,6 +20,24 @@ export const loginUser = async (userData: LoginData): Promise<AuthResponse> => {
     throw error.response?.data || error.message;
   }
 };
+
+export const forgotPassword = async (userData: ForgotPasswordData): Promise<AuthResponse> => {
+  try {
+    const response = await axiosInstance.post<AuthResponse>('/users/forgot-password', userData);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const resetPassword = async (userData: ResetPasswordData): Promise<AuthResponse> => {
+  try {
+    const response = await axiosInstance.post<AuthResponse>('/users/reset-password', userData);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error.message;
+  }
+}
 
 export const verifyOtp = async (otp: string, email: string): Promise<AuthResponse> => {
   try {

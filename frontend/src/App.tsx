@@ -7,15 +7,15 @@ import ResetPassword from "./pages/auth/ResetPasswordPage";
 import PrivateRoute from './components/common/PrivateRoute';
 import PublicRoute from './components/common/PublicRoute';
 import Cookies from 'js-cookie';
-import Sidebar from "./components/common/Sidebar";
 import NotFound from "./pages/NotFound";
+import HomePage from "./pages/home/HomePage";
 
 function App() {
   const accessToken = Cookies.get('accessToken'); // Read token
 
   return (
     <>
-      <Router key={accessToken ? 'authenticated' : 'unauthenticated'}>
+      <Router key={accessToken ? "authenticated" : "unauthenticated"}>
         <Routes>
           <Route
             path="/login"
@@ -34,7 +34,14 @@ function App() {
             }
           />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/" element={<PrivateRoute><Sidebar /></PrivateRoute>} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <HomePage />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

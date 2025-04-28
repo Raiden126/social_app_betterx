@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { JSX } from "react";
 import { authService } from "@/services/authService";
-import { Loader, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface PrivateRouteProps {
   children: JSX.Element;

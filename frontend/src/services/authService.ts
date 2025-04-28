@@ -1,6 +1,7 @@
-import { registerUser, loginUser } from "@/api/auth/auth";
+import { registerUser, loginUser, verifyOtp, resendOtp } from "@/api/auth/auth";
 import { LoginData, RegisterData, AuthResponse } from "@/types/auth";
 
+const API_BASE = import.meta.env.VITE_REACT_APP_API_ENDPOINT + "/api/users";
 export const authService = {
   register: async (userData: RegisterData): Promise<AuthResponse> => {
     try {
@@ -16,5 +17,28 @@ export const authService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  verifyOtp: async (otp: string, email: string): Promise<AuthResponse> => {
+    try {
+      return await verifyOtp(otp, email);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  resendOtp: async (email: string): Promise<AuthResponse> => {
+    try {
+      return await resendOtp(email);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  googleLogin: () => {
+    window.location.href = `${API_BASE}/google`;
+  },
+  githubLogin: () => {
+    window.location.href = `${API_BASE}/github`;
   },
 };

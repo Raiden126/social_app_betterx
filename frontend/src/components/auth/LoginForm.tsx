@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { authService } from "@/services/authService";
-import { oauthService } from "@/services/oauthService";
 import { Github, ShieldCheck } from "lucide-react";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
@@ -84,7 +83,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                   <a
-                    href="#"
+                    href="/forgot-password"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?
@@ -121,7 +120,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={oauthService.googleLogin}
+                  onClick={authService.googleLogin}
                 >
                   <ShieldCheck className="mr-2 h-4 w-4" />
                   Google
@@ -129,7 +128,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={oauthService.githubLogin}
+                  onClick={authService.githubLogin}
                 >
                   <Github className="mr-2 h-4 w-4" />
                   GitHub

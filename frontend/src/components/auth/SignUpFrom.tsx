@@ -7,13 +7,14 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import { Github, Loader2, ShieldCheck } from "lucide-react"
 import { authService } from "@/services/authService"
-import { oauthService } from "@/services/oauthService"
+import { useToast } from "@/components/ui/use-toast"
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [formData, setFormData] = useState({
     username: "",
     firstname: "",
@@ -61,7 +62,11 @@ export function SignupForm({
       setLoading(true)
       const payload = {username, firstname, lastname, email, password, confirmPassword}
       await authService.register(payload);
-      console.log("Registration successful")
+      toast({
+        title: "Success",
+        description: "Registration successful! Please check your email for OTP.",
+      });
+      navigate("/verify-otp", { state: { email } });
     } catch (err: any) {
       setErrorMessage(err.message || "Something went wrong.")
     } finally {
@@ -182,7 +187,7 @@ export function SignupForm({
               <div className="grid grid-cols-2 gap-4">
                 <Button
                   variant="outline"
-                  onClick={oauthService.googleLogin}
+                  onClick={authService.googleLogin}
                   disabled={loading}
                 >
                   <ShieldCheck className="mr-2 h-4 w-4" />
@@ -190,7 +195,7 @@ export function SignupForm({
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={oauthService.githubLogin}
+                  onClick={authService.githubLogin}
                   disabled={loading}
                 >
                   <Github className="mr-2 h-4 w-4" />

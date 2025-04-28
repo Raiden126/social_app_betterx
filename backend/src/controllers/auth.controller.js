@@ -238,7 +238,7 @@ export const resendOTP = async (req, res) => {
       return res.status(400).json(new ApiError(400, "Email is required"));
     }
 
-    const user = await User.findOne({ email, deleteAt: { $eq: null } });
+    const user = await User.findOne({ email, deletedAt: { $eq: null } });
 
     if (!user) {
       return res.status(404).json(new ApiError(404, "User not found"));
@@ -278,7 +278,7 @@ export const forgotpassword = async (req, res) => {
       return res.status(400).json(new ApiError(400, "Email is required"));
     }
 
-    const user = await User.findOne({ email, deleteAt: { $eq: null } });
+    const user = await User.findOne({ email, deletedAt: { $eq: null } });
 
     if (!user) {
       return res.status(404).json(new ApiError(404, "User not found"));
@@ -333,7 +333,7 @@ export const resetPassword = async (req, res) => {
       _id: decoded.id,
       "resetPasswordToken.token": token,
       "resetPasswordToken.expiresAt": { $gt: new Date() },
-      deleteAt: { $eq: null },
+      deletedAt: { $eq: null },
     });
 
     if (!user) {

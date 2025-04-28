@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { authService } from "@/services/authService";
 import { Github, Loader2, ShieldCheck } from "lucide-react";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
@@ -20,6 +20,8 @@ export function LoginForm({
   const [errorMessage, setErrorMessage] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -50,6 +52,7 @@ export function LoginForm({
         title: "Success",
         description: 'Login successful',
       });
+      navigate('/');
     } catch (err: any) {
       toast({
         title: "Error",

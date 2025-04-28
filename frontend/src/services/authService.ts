@@ -1,5 +1,7 @@
 import { registerUser, loginUser, verifyOtp, resendOtp, forgotPassword, resetPassword } from "@/api/auth/auth";
 import { LoginData, RegisterData, AuthResponse } from "@/types/auth";
+import Cookies from 'js-cookie';
+import axiosInstance from "@/utils/axiosInstance";
 
 const API_BASE = import.meta.env.VITE_REACT_APP_API_ENDPOINT + "/api/users";
 export const authService = {
@@ -49,6 +51,20 @@ export const authService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  refreshToken: async () => {
+    try {
+      await axiosInstance.post('/users/refresh-token');
+    } catch (error: any) {
+      throw error?.response?.data || error.message;
+    }
+  },
+
+  logout: () => {
+    Cookies.remove('accessToken');
+    Cookies.remove('refreshToken');
+    window.location.href = '/login'; // redirect to login page
   },
 
   googleLogin: () => {

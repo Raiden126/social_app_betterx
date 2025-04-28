@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { authService } from '@/services/authService';
 
 const axiosInstance = axios.create({

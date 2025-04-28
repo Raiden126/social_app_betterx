@@ -8,6 +8,7 @@ import PrivateRoute from './components/common/PrivateRoute';
 import PublicRoute from './components/common/PublicRoute';
 import Cookies from 'js-cookie';
 import Sidebar from "./components/common/Sidebar";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const accessToken = Cookies.get('accessToken'); // Read token
@@ -34,6 +35,7 @@ function App() {
           />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/" element={<PrivateRoute><Sidebar /></PrivateRoute>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
       <Toaster />

@@ -57,18 +57,24 @@ export const verifyOtp = async (otp: string, email: string): Promise<AuthRespons
 };
 
 export const resendOtp = async (email: string): Promise<AuthResponse> => {
-  const response = await fetch(`${API_BASE}/resend-otp`, {
-    method: "POST",
+  const response = await axiosInstance.post<AuthResponse>(`${API_BASE}/resend-otp`, email, {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email }),
   });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to resend OTP");
+  if (!response.status) {
+    throw new Error("Failed to resend OTP");
   }
 
-  return response.json();
+  return response.data;
 };
+
+export const logOut = async () => {
+  try {
+    const response = await axiosInstance.post('/users/logout');
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error.message;
+  }
+}

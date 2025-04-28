@@ -391,3 +391,23 @@ export const changePassword = async (req, res) => {
       .json(new ApiError(500, "Something went wrong. Try again."));
   }
 };
+
+export const userMe = async (req, res) => {
+  const accessToken = req.cookies.accessToken;
+
+  if (!accessToken) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN);
+    res.json({
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ message: 'Invalid Token' });
+  }
+}

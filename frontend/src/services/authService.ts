@@ -1,6 +1,5 @@
-import { registerUser, loginUser, verifyOtp, resendOtp, forgotPassword, resetPassword } from "@/api/auth/auth";
+import { registerUser, loginUser, verifyOtp, resendOtp, forgotPassword, resetPassword, logOut } from "@/api/auth/auth";
 import { LoginData, RegisterData, AuthResponse } from "@/types/auth";
-import Cookies from 'js-cookie';
 import axiosInstance from "@/utils/axiosInstance";
 
 const API_BASE = import.meta.env.VITE_REACT_APP_API_ENDPOINT + "/api/users";
@@ -61,10 +60,13 @@ export const authService = {
     }
   },
 
-  logout: () => {
-    Cookies.remove('accessToken');
-    Cookies.remove('refreshToken');
-    window.location.href = '/login'; // redirect to login page
+  logout: async () => {
+    try {
+      await logOut();
+      window.location.href = '/login';
+    } catch (error: any) {
+      throw error?.response?.data || error.message;
+    }
   },
 
   googleLogin: () => {
@@ -73,4 +75,9 @@ export const authService = {
   githubLogin: () => {
     window.location.href = `${API_BASE}/github`;
   },
+
+  getProfile: async () => {
+      const response = await axiosInstance.get('/users/me', { withCredentials: true });
+      return response.data;
+  }
 };

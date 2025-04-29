@@ -1,54 +1,54 @@
 // src/components/Post.tsx
+import { useState } from "react";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 
-interface PostProps {
-  imageUrl: string;
-  content: string;
-  title: string;
-  author: string;
-  time: string;
-  likes: number;
-  comments: number;
-}
-
-const Post = ({
-  imageUrl,
-  content,
-  title,
-  author,
-  time,
-  likes,
-  comments,
-}: PostProps) => {
+const Post = ({ ...props }: React.ComponentProps<"div">) => {
+  const [formData, setFormData] = useState({
+    imageUrl: "",
+    content: "",
+    title: "",
+    author: "",
+    time: "",
+    likes: "",
+    comments: "",
+  });
+console.log("Post data:", formData);
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const { name, value } = e.target;
+     setFormData((prev) => ({ ...prev, [name]: value }));
+   };
   return (
-    <div className="bg-black p-4 rounded-lg shadow-md flex flex-col gap-4">
+    <div
+      className="bg-black p-4 rounded-lg shadow-md flex flex-col gap-4"
+      {...props}
+    >
       {/* Post Title */}
-      <h3 className="font-bold text-lg">{title}</h3>
+      <h3 className="font-bold text-lg">{formData.title}</h3>
 
       {/* Post Author and Time */}
       <div className="text-sm text-gray-500">
-        {author} · {time}
+        {formData.author} · {formData.time}
       </div>
 
       {/* Post Image */}
       <div className="w-full mb-2">
         <img
-          src={imageUrl}
+          src={formData.imageUrl}
           alt="Post Image"
           className="w-full h-auto rounded-lg object-cover"
         />
       </div>
 
       {/* Post Content */}
-      <div className="text-gray-700">{content}</div>
+      <div className="text-gray-700">{formData.content}</div>
 
       {/* Interaction Buttons (Likes, Comments, Share) */}
       <div className="mt-4 flex items-center gap-6 text-gray-500">
         <div className="flex items-center gap-1 cursor-pointer">
-          <Heart size={18} /> <span>{likes}</span>
+          <Heart size={18} /> <span>{formData.likes}</span>
         </div>
         <div className="flex items-center gap-1 cursor-pointer">
-          <MessageCircle size={18} /> <span>{comments}</span>
+          <MessageCircle size={18} /> <span>{formData.comments}</span>
         </div>
         <div className="flex items-center gap-1 cursor-pointer">
           <Share2 size={18} />

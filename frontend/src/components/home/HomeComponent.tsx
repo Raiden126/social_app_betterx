@@ -1,44 +1,53 @@
 // src/pages/HomeComponent.tsx
+import { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import Post from "../post/Post";
+import { getPosts } from "@/api/post/post"; // Import your getPosts function
+import { PostResponse } from "@/types/post";
 
 const HomeComponent = () => {
-  const posts = [
-    {
-      imageUrl: "https://via.placeholder.com/600x400",
-      content:
-        "This is the content of the post. It can be a longer description or text.",
-      title: "First Post",
-      author: "John Doe",
-      time: "2 hours ago",
-      likes: 150,
-      comments: 20,
-    },
-    {
-      imageUrl: "https://via.placeholder.com/600x400",
-      content: "Here’s another post with some content.",
-      title: "Second Post",
-      author: "Jane Smith",
-      time: "4 hours ago",
-      likes: 200,
-      comments: 50,
-    },
-    // More posts here
-  ];
+  const [posts, setPosts] = useState<PostResponse>([]);
+  // const [loading, setLoading] = useState<boolean>(true);
+  // const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await getPosts();
+        setPosts(response);
+        console.log("Posts fetched successfully:", response);
+        // setLoading(false);
+      } catch (err) {
+        // setError("Error fetching posts");
+        // setLoading(false);
+      }
+    };
+
+    fetchPosts(); // Call the fetch function when the component mounts
+  }, []);
+
+  // if (loading) {
+  //   return <div>Loading...</div>; // Show loading state while fetching
+  // }
+
+  // if (error) {
+  //   return <div>{error}</div>; // Show error if there's a problem fetching
+  // }
 
   return (
     <MainLayout>
       <div className="space-y-4">
         {posts.map((post, index) => (
+          console.log('post',post),
           <Post
             key={index}
-            imageUrl={post.imageUrl}
-            content={post.content}
+            imageUrl={post.content?.[0] || ""}
+            content={post.text}
             title={post.title}
-            author={post.author}
-            time={post.time}
-            likes={post.likes}
-            comments={post.comments}
+            author={post.user_id || "Unknown"}
+            time={new Date(post.createdAt).toLocaleString()}
+            likes={post.likes?.length || 0}
+            comments={post.comments?.length || 0}
           />
         ))}
       </div>

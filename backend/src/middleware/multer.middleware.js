@@ -2,7 +2,7 @@ import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary.js";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 20 * 1024 * 1024;;
 
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg", "video/mp4", "video/mov"]; 
 

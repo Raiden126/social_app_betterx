@@ -37,10 +37,8 @@ function App() {
           <Route
             path="/"
             element={
-              <PrivateRoute>
-                <HomePage />
-              </PrivateRoute>
-            }
+                <HomePage />            
+              }
           />
           <Route path="*" element={<NotFound />} />
         </Routes>

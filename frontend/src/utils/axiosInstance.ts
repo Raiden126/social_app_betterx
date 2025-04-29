@@ -29,17 +29,19 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // 🛑 Don't try refresh if it is already a retry OR if it's /logout or /refresh-token route
+    if (error.response?.status === 401 && !originalRequest._retry &&
+      !originalRequest.url.includes("/logout") && 
+      !originalRequest.url.includes("/refresh-token")
+    ) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            return axiosInstance(originalRequest);
-          })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
+        }).then((token) => {
+          return axiosInstance(originalRequest);
+        }).catch((err) => {
+          return Promise.reject(err);
+        });
       }
 
       originalRequest._retry = true;

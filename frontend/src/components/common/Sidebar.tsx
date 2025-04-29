@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Home, Search, MessageCircle, Calendar, Bell, Mail, User } from 'lucide-react';
+import { Home, Search, MessageCircle, Calendar, Bell, Mail, User, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-const Sidebar = () => {
+const Sidebar = ({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean;
+  setIsOpen: (val: boolean) => void;
+}) => {
   const [active, setActive] = useState('Home');
-  const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
     { name: 'Home', icon: <Home size={20} /> },
@@ -15,72 +20,51 @@ const Sidebar = () => {
     { name: 'Account', icon: <User size={20} /> },
   ];
 
-  // Prevent scrolling when sidebar is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
   }, [isOpen]);
 
   return (
     <>
-      {/* Mobile menu button */}
-      <button 
-        className="md:hidden fixed top-4 left-4 z-50 bg-blue-600 text-white p-2 rounded-md"
-        onClick={() => setIsOpen(true)}
-      >
-        Menu
-      </button>
-
-      {/* Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={() => setIsOpen(false)}
         ></div>
       )}
 
-      {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full w-64 bg-black text-white p-6 flex flex-col justify-between 
-        transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
-        transition-transform duration-300 ease-in-out z-50 md:translate-x-0 md:static md:flex-shrink-0`}
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-black text-white p-6 flex flex-col justify-between
+          transform ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          transition-transform duration-300 ease-in-out z-50 md:translate-x-0 md:static md:flex-shrink-0`}
       >
         <div>
-          {/* Close button for mobile */}
           <div className="flex justify-between items-center mb-10 md:hidden">
             <div className="text-3xl font-extrabold text-white">
               Better<span className="text-blue-500">X</span>
             </div>
-            <button 
-              className="text-gray-400 hover:text-white"
-              onClick={() => setIsOpen(false)}
-            >
-              ✕
+            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
+              <X size={24} />
             </button>
           </div>
 
-          {/* Logo for desktop */}
-          <div className="hidden md:flex text-3xl font-extrabold text-white mb-10">
-            Better<span className="text-blue-500">X</span>
-          </div>
-
-          {/* Navigation */}
           <nav className="flex flex-col gap-2">
             {menuItems.map((item) => (
-              <button 
+              <button
                 key={item.name}
                 onClick={() => {
                   setActive(item.name);
-                  setIsOpen(false); // Close sidebar on mobile after clicking
+                  setIsOpen(false);
                 }}
-                className={`flex items-center gap-4 text-base font-medium px-3 py-2 rounded-lg transition 
-                  ${active === item.name 
-                    ? 'bg-gray-800 text-white' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800'}`
-                }
+                className={`flex items-center gap-4 text-base font-medium px-3 py-2 rounded-lg relative transition
+                  ${active === item.name
+                    ? 'bg-gray-800 text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
               >
+                <span
+                  className={`absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-md transition-all
+                    ${active === item.name ? 'opacity-100' : 'opacity-0'}`}
+                />
                 {item.icon}
                 <span>{item.name}</span>
               </button>
@@ -88,10 +72,7 @@ const Sidebar = () => {
           </nav>
         </div>
 
-        {/* Footer */}
-        <div className="text-xs text-gray-600 mt-6">
-          © Copyright 2025
-        </div>
+        <div className="text-xs text-gray-600 mt-6">© Copyright 2025</div>
       </div>
     </>
   );

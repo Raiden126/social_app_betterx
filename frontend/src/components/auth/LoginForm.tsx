@@ -169,7 +169,7 @@ export function LoginForm({
                 <img
                   src="/login.avif"
                   alt="Login graphic"
-                  className="absolute inset-0 h-full w-full object-cover brightness-75"
+                  className="absolute inset-0 h-full w-full object-cover brightness-100"
                 />
               </div>
             </CardContent>

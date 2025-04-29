@@ -6,11 +6,12 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 export async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   const tokenFromHeader = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
-  const tokenFromCookie = req.cookies?.token;
+  const tokenFromCookie = req.cookies?.accessToken;
 
   const token = tokenFromHeader || tokenFromCookie;
 
   if (!token) {
+    console.log("No token provided or bad format");
     return res.status(401).json(new ApiError(401, "No token provided or bad format"));
   }
 

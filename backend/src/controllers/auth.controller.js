@@ -134,6 +134,7 @@ export const verifyUser = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "Strict",
     };
 
     return res
@@ -192,6 +193,7 @@ export const loginUser = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "Strict"
     };
 
     const userResponse = user.toObject();
@@ -217,6 +219,7 @@ export const logoutUser = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "Strict",
     };
 
     return res

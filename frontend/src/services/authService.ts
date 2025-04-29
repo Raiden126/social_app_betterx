@@ -63,7 +63,6 @@ export const authService = {
   logout: async () => {
     try {
       await logOut();
-      window.location.href = '/login';
     } catch (error: any) {
       throw error?.response?.data || error.message;
     }

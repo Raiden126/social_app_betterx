@@ -21,7 +21,7 @@ const postSchema = new Schema({
     type: [String],
     default: "",
   },
-});
+}, {timeStamps: true});
 
 const Post = model("Post", postSchema);
 export default Post;

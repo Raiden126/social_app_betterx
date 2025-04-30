@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import { deleteUser } from "../controllers/user.controller.js";
+import { deleteUser, getUserProfile } from "../controllers/user.controller.js";
 import { updateUser } from "../controllers/user.controller.js";
 import { uploadUserMedia } from "../middleware/multer.middleware.js";
 
@@ -10,5 +10,6 @@ router.use(authMiddleware);
 
 router.post("/delete-user", deleteUser);
 router.post("/update", uploadUserMedia, updateUser);
+router.get('/get-user/:username', getUserProfile);
 
 export default router;

@@ -26,6 +26,7 @@ export async function authMiddleware(req, res, next) {
     req.user = user;
     next();
   } catch (err) {
+    console.log("Invalid or expired token", err);
     return res.status(401).json(new ApiError(401, "Invalid or expired token"));
   }
 }

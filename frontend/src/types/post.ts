@@ -1,14 +1,30 @@
 export interface PostData {
-  _id: string; // This matches the "id" in your API response
-  user_id: string; // This is the user ID from the API response
+  _id: string;
+  user_id: string;
   title: string;
   text: string;
-  content: string[]; // Array of URLs (images or videos)
-  __v: number; // If you need the version key
+  username: string;
+  content: string[];
+  likesCount: number;
+  commentsCount: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 export interface PostResponse {
   success: boolean;
   message: string;
-  data: PostData[]; // This should be an array of posts
+  data: PostData[];
+}
+
+export interface PostProps {
+  _id: string;
+  content: string[];
+  title: string;
+  author: string;
+  time: string;
+  likesCount: number;
+  commentsCount: number;
+  currentUserId: string;
 }

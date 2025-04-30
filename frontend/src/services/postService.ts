@@ -1,10 +1,10 @@
 import { getPosts } from "@/api/post/post";
-import { PostData, PostResponse } from "@/types/post";
+import { PostResponse } from "@/types/post";
 
 export const postService = {
-  getpost: async (postData: PostData): Promise<PostResponse> => {
+  getpost: async (): Promise<PostResponse> => {
     try {
-      return await getPosts(postData);
+      return await getPosts();
     } catch (error) {
       throw error;
     }

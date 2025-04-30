@@ -6,7 +6,7 @@ export const getPosts = async (): Promise<PostResponse> => {
     const response = await axiosInstance.get<PostResponse>(
       "/post/get-posts"
     );
-    return response.data.data;
+    return response.data;
   } catch (error: any) {
     throw error.response?.data || error.message;
   }

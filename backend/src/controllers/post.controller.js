@@ -53,59 +53,59 @@ export const getUserPosts = async (req, res) => {
 
     const posts = await Post.aggregate([
       {
-      $match: {
-        user_id: user._id,
-      },
-      },
-      {
-      $lookup: {
-        from: "comments",
-        localField: "_id",
-        foreignField: "post",
-        as: "comments",
-      },
-      },
-      {
-      $lookup: {
-        from: "likes",
-        localField: "_id",
-        foreignField: "post",
-        as: "likes",
-      },
-      },
-      {
-      $lookup: {
-        from: "users",
-        localField: "user_id",
-        foreignField: "_id",
-        as: "userDetails",
-      },
-      },
-      {
-      $unwind: "$userDetails",
-      },
-      {
-      $addFields: {
-        commentsCount: {
-        $size: "$comments",
+        $match: {
+          user_id: user._id,
         },
-        likesCount: {
-        $size: "$likes",
-        },
-        username: "$userDetails.username",
-        firstname: "$userDetails.firstname",
-        lastname: "$userDetails.lastname",
-        profilepic: "$userDetails.profilepic",
-        user_id: "$userDetails._id",
-        createdAt: "$createdAt",
-        updatedAt: "$updatedAt",
-      },
       },
       {
-      $sort: {
-        createdAt: -1,
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "post",
+          as: "comments",
+        },
       },
-      }
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "post",
+          as: "likes",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $unwind: "$userDetails",
+      },
+      {
+        $addFields: {
+          commentsCount: {
+            $size: "$comments",
+          },
+          likesCount: {
+            $size: "$likes",
+          },
+          username: "$userDetails.username",
+          firstname: "$userDetails.firstname",
+          lastname: "$userDetails.lastname",
+          profilepic: "$userDetails.profilepic",
+          user_id: "$userDetails._id",
+          createdAt: "$createdAt",
+          updatedAt: "$updatedAt",
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
     ]);
 
     if (!posts || posts.length === 0) {
@@ -205,18 +205,18 @@ export const getPostById = async (req, res) => {
       {
         $addFields: {
           commentsCount: {
-            $size: "$comments"
+            $size: "$comments",
           },
           likesCount: {
-            $size: "$likes"
-          }
-        }
+            $size: "$likes",
+          },
+        },
       },
       {
         $sort: {
           createdAt: -1,
-        }
-      }
+        },
+      },
     ]);
     if (!post || post.length === 0) {
       return res.status(404).json(new ApiError(404, "Post not found"));

@@ -9,6 +9,7 @@ import PublicRoute from './components/common/PublicRoute';
 import Cookies from 'js-cookie';
 import NotFound from "./pages/NotFound";
 import HomePage from "./pages/home/HomePage";
+import AccountPage from "./pages/user/AccountPage";
 
 function App() {
   const accessToken = Cookies.get('accessToken'); // Read token
@@ -39,6 +40,14 @@ function App() {
             element={
                 <HomePage />            
               }
+          />
+          <Route
+            path="/account"
+            element= {
+              <PrivateRoute>
+                <AccountPage />
+              </PrivateRoute>
+            }
           />
           <Route path="*" element={<NotFound />} />
         </Routes>

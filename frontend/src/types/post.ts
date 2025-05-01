@@ -7,6 +7,8 @@ export interface PostData {
   content: string[];
   likesCount: number;
   commentsCount: number;
+  comments: string[];
+  // likes: string[];
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -27,4 +29,6 @@ export interface PostProps {
   likesCount: number;
   commentsCount: number;
   currentUserId: string;
+  comments: string[];
+  // likes: string[];
 }

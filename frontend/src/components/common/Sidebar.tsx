@@ -1,5 +1,6 @@
 import { Home, Search, MessageCircle, Calendar, Bell, Mail, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = ({
   isOpen,
@@ -9,16 +10,25 @@ const Sidebar = ({
   setIsOpen: (val: boolean) => void;
 }) => {
   const [active, setActive] = useState('Home');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
-    { name: 'Home', icon: <Home size={20} /> },
-    { name: 'Explore', icon: <Search size={20} /> },
-    { name: 'Discussions', icon: <MessageCircle size={20} /> },
-    { name: 'Events', icon: <Calendar size={20} /> },
-    { name: 'Notifications', icon: <Bell size={20} /> },
-    { name: 'Messages', icon: <Mail size={20} /> },
-    { name: 'Account', icon: <User size={20} /> },
+    { name: 'Home', icon: <Home size={20} />, route: '/' },
+    { name: 'Explore', icon: <Search size={20} />, route: '/explore' },
+    { name: 'Discussions', icon: <MessageCircle size={20} />, route: '/discussion' },
+    { name: 'Events', icon: <Calendar size={20} />, route: '/events' },
+    { name: 'Notifications', icon: <Bell size={20} />, route: '/notification' },
+    { name: 'Messages', icon: <Mail size={20} />, route: '/messages' },
+    { name: 'Account', icon: <User size={20} />, route: '/account' },
   ];
+
+  useEffect(() => {
+    const currentItem = menuItems.find((item) => item.route === location.pathname);
+    if (currentItem) {
+      setActive(currentItem.name);
+    }
+  }, [location.pathname, menuItems]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'auto';
@@ -55,6 +65,7 @@ const Sidebar = ({
                 onClick={() => {
                   setActive(item.name);
                   setIsOpen(false);
+                  navigate(item.route);
                 }}
                 className={`flex items-center gap-4 text-base font-medium px-3 py-2 rounded-lg relative transition
                   ${active === item.name

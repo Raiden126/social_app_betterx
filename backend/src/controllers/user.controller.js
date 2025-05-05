@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
+import { buildUserProfilePipeline } from "../utils/AggregationPipeline.js";
 
 export const deleteUser = async (req, res) => {
     try {
@@ -91,52 +92,7 @@ export const getUserProfile = async (req, res) => {
       return res.status(400).json(new ApiError(400, 'Username is missing'));
     }
 
-    const user = await User.aggregate([
-      {
-        $match: {
-          username: username.toLowerCase()
-        }
-      },
-      {
-        $lookup: {
-          from: "follows",
-          localField: "_id",
-          foreignField: "following",
-          as: "following"
-        }
-      },
-      {
-        $lookup: {
-          from: "follows",
-          localField: "_id",
-          foreignField: "follows",
-          as: "follower"
-        }
-      },
-      {
-        $addFields: {
-          followerCount: {
-            $size: "$follower"  
-          },
-          followingCount: {
-            $size: "$following"
-          }
-        }
-      },
-      {
-        $project: {
-          username: 1,
-          firstname: 1,
-          lastname: 1,
-          email: 1,
-          followingCount: 1,
-          followerCount: 1,
-          profilePicture: 1,
-          coverImage: 1,
-          bio: 1
-        }
-      }
-    ])
+    const user = await User.aggregate(buildUserProfilePipeline(username))
 
     if(!user || user.length === 0) {
       return res.status(404).json(new ApiError(404, 'User not found'));
@@ -160,52 +116,7 @@ export const getAuthUserProfile = async (req, res) => {
       return res.status(400).json(new ApiError(400, 'User ID is missing'));
     }
 
-    const user = await User.aggregate([
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(userId)
-        }
-      },
-      {
-        $lookup: {
-          from: "follows",
-          localField: "_id",
-          foreignField: "following",
-          as: "following"
-        }
-      },
-      {
-        $lookup: {
-          from: "follows",
-          localField: "_id",
-          foreignField: "follows",
-          as: "follower"
-        }
-      },
-      {
-        $addFields: {
-          followerCount: {
-            $size: "$follower"  
-          },
-          followingCount: {
-            $size: "$following"
-          }
-        }
-      },
-      {
-        $project: {
-          username: 1,
-          firstname: 1,
-          lastname: 1,
-          email: 1,
-          followingCount: 1,
-          followerCount: 1,
-          profilePicture: 1,
-          coverImage: 1,
-          bio: 1
-        }
-      }
-    ])
+    const user = await User.aggregate(buildUserProfilePipeline(new mongoose.Types.ObjectId(userId)))
 
     // console.log('user', user);
 
@@ -216,7 +127,7 @@ export const getAuthUserProfile = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, user[0], 'User profile fetched successfully'));
   } catch (error) {
-    console.log('error in getUserProfile', error.message);
+    console.log('error in getAuthUserProfile', error.message);
     return res
       .status(500)
       .json(new ApiError(500, 'Something went wrong, please try again'));

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { UserProfile } from "@/types/userProfile";
 import { Loader2, Pencil } from "lucide-react";
+import { postService } from "@/services/postService";
+import Post from "./Post";
 
 const fallbackCover = "/fallbacks/cover-placeholder.jpg";
 const fallbackProfile = "/fallbacks/profile-placeholder.png";
@@ -18,13 +20,35 @@ const UserAccount = () => {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [userPosts, setUserPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [userReactions, setUserReactions] = useState<Record<string, string>>({});
 
   const coverInputRef = useRef<HTMLInputElement>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchUser();
+    fetchUserPosts();
   }, []);
+
+  const fetchUserPosts = async () => {
+    try {
+      setPostsLoading(true);
+      const response = await postService.getAuthUserPost();
+      console.log("User posts:", response);
+      setUserPosts(response.data);
+      
+      // Here we would ideally fetch user reactions for all posts
+      // For now, this would be implemented in a real app
+      // Example: const reactionsResponse = await likeService.getUserReactions();
+      // setUserReactions(reactionsResponse.data);
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+    } finally {
+      setPostsLoading(false);
+    }
+  };
 
   const fetchUser = async () => {
     try {
@@ -36,12 +60,17 @@ const UserAccount = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: "profile" | "cover") => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "profile" | "cover"
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -66,7 +95,7 @@ const UserAccount = () => {
 
   const handleSave = async () => {
     try {
-        setLoading(true);
+      setLoading(true);
       const form = new FormData();
       if (formData.firstname) form.append("firstname", formData.firstname);
       if (formData.lastname) form.append("lastname", formData.lastname);
@@ -76,14 +105,24 @@ const UserAccount = () => {
 
       await userService.updateUserProfile(form);
       await fetchUser();
-        setLoading(false);
+      setLoading(false);
       setEditMode(false);
     } catch (err) {
       console.error("Error updating profile:", err);
     }
   };
 
-  if (!user) return <p className="text-center mt-10 text-gray-500">Loading...</p>;
+  const handlePostLike = async (postId: string) => {
+    // This function would typically update some local state or refetch data
+    // In a real implementation, you might want to fetch updated like counts
+    console.log("Post interaction:", postId);
+    
+    // In a real app, we might update the userReactions state here
+    // or refetch the post data to get the updated counts
+  };
+
+  if (!user)
+    return <p className="text-center mt-10 text-gray-500">Loading...</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -107,12 +146,12 @@ const UserAccount = () => {
               onClick={() => coverInputRef.current?.click()}
               className="absolute top-2 right-2 bg-white p-1 rounded-full cursor-pointer shadow-md hover:bg-gray-100"
             >
-              <Pencil size={18} className="text-black"/>
+              <Pencil size={18} className="text-black" />
             </div>
           </>
         )}
         {/* Profile Image */}
-        <div className="absolute -bottom-12 left-4 group relative">
+        <div className="absolute -bottom-12 left-4 group">
           <img
             src={profilePreview || user.profilePicture || fallbackProfile}
             alt="Profile"
@@ -131,7 +170,7 @@ const UserAccount = () => {
                 onClick={() => profileInputRef.current?.click()}
                 className="absolute bottom-1 right-1 bg-white p-1 rounded-full cursor-pointer shadow-md hover:bg-gray-100"
               >
-                <Pencil size={16} className="text-black"/>
+                <Pencil size={16} className="text-black" />
               </div>
             </>
           )}
@@ -146,26 +185,54 @@ const UserAccount = () => {
             <Button onClick={() => setEditMode(true)}>Edit Profile</Button>
           ) : (
             <div className="space-x-2">
-              <Button variant="outline" onClick={handleCancel} disabled={loading}>
+              <Button
+                variant="outline"
+                onClick={handleCancel}
+                disabled={loading}
+              >
                 Cancel
               </Button>
-              <Button onClick={handleSave} disabled={loading}>{loading ? <Loader2 className="animate-spin" /> : "Save"}</Button>
+              <Button onClick={handleSave} disabled={loading}>
+                {loading ? <Loader2 className="animate-spin" /> : "Save"}
+              </Button>
             </div>
           )}
         </div>
 
         <div className="mt-4 space-y-3">
           <div className="flex gap-4">
-            <span className="text-muted-foreground">{user.followingCount} Following</span>
-            <span className="text-muted-foreground">{user.followerCount} Followers</span>
+            <span className="text-muted-foreground">
+              {user.followingCount} Following
+            </span>
+            <span className="text-muted-foreground">
+              {user.followerCount} Followers
+            </span>
+            <span className="text-muted-foreground">
+              {user.postsCount} Total Posts
+            </span>
           </div>
 
           <div className="space-y-2">
             {editMode ? (
               <>
-                <Input name="firstname" value={formData.firstname || ""} onChange={handleInputChange} placeholder="First name" />
-                <Input name="lastname" value={formData.lastname || ""} onChange={handleInputChange} placeholder="Last name" />
-                <Textarea name="bio" value={formData.bio || ""} onChange={handleInputChange} placeholder="Your bio..." />
+                <Input
+                  name="firstname"
+                  value={formData.firstname || ""}
+                  onChange={handleInputChange}
+                  placeholder="First name"
+                />
+                <Input
+                  name="lastname"
+                  value={formData.lastname || ""}
+                  onChange={handleInputChange}
+                  placeholder="Last name"
+                />
+                <Textarea
+                  name="bio"
+                  value={formData.bio || ""}
+                  onChange={handleInputChange}
+                  placeholder="Your bio..."
+                />
               </>
             ) : (
               <>
@@ -177,6 +244,27 @@ const UserAccount = () => {
             )}
           </div>
         </div>
+      </div>
+      {/* User Posts */}
+      <div className="mt-10">
+        <h2 className="text-xl font-bold mb-4">Posts</h2>
+        {postsLoading ? (
+          <p className="text-gray-500">Loading posts...</p>
+        ) : userPosts.length === 0 ? (
+          <p className="text-gray-500">No posts to display.</p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {userPosts.map((post: any) => (
+                <Post
+                    key={post._id}
+                    post={post}
+                    onLike={handlePostLike}
+                    isLiked={Boolean(userReactions[post._id])}
+                    userReaction={userReactions[post._id] || null}
+                />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

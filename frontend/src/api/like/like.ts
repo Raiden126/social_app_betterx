@@ -1,10 +1,13 @@
 import axiosInstance from "@/utils/axiosInstance";
 
-export const reactToPostApi = (postId: string, type: string) =>
-  axiosInstance.post(`/like/${postId}`, { type });
+export const reactToPostApi = async (postId: string, type: string) =>
+  await axiosInstance.post(`/like/${postId}`, { type });
 
-export const removeReactionApi = (postId: string) =>
-  axiosInstance.delete(`/like/${postId}`);
+export const removeReactionApi = async (postId: string) =>
+  await axiosInstance.delete(`/like/${postId}`);
 
-export const getReactionsApi = (postId: string) =>
-  axiosInstance.get(`/like/post/${postId}`);
+export const getPostReactionsApi = async (postId: string) =>
+  await axiosInstance.get(`/like/${postId}`);
+
+export const getUserReactionsApi = async (postId: string) => 
+  await axiosInstance.get(`/like/${postId}/user-reaction`);

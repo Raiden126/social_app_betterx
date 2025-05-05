@@ -1,13 +1,23 @@
 import axiosInstance from "@/utils/axiosInstance";
-import { PostResponse } from "@/types/post";
 
-export const getPosts = async (): Promise<PostResponse> => {
+export const getAuthUserPosts = async () => {
   try {
-    const response = await axiosInstance.get<PostResponse>(
-      "/post/get-posts"
+    const response = await axiosInstance.get(
+      "/post/get-auth-posts"
     );
     return response.data;
   } catch (error: any) {
     throw error.response?.data || error.message;
   }
 };
+
+export const getUserPosts = async (username: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `/post/get-user-posts/${username}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error.message;
+  }
+}

@@ -8,5 +8,6 @@ export interface UserProfile {
     coverImage?: string;
     followerCount: number;
     followingCount: number;
+    postsCount: number;
   }
   

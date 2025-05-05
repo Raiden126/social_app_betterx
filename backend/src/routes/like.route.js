@@ -3,6 +3,7 @@ import {
   reactToPost,
   removeReaction,
   getPostReactions,
+  getUserReaction,
 //   getUserLikes,
 } from '../controllers/like.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
@@ -15,6 +16,7 @@ router.use(authMiddleware);
 
 router.post('/:postId', reactToPost);
 router.delete('/:postId', removeReaction);
+router.get('/:postId/user-reaction', getUserReaction);
 // router.get('/user/me', getUserLikes);
 
 export default router;

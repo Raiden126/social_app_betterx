@@ -21,6 +21,11 @@ export const reactToPost = async (req, res) => {
       return res.status(400).json({ message: 'Invalid reaction type' });
     }
 
+    const existing = await Like.findOne({ user: userId, post: postId });
+    if (existing && existing.type === type) {
+      return res.status(200).json(new ApiResponse(200, existing, 'Reaction unchanged'));
+    }
+
     const reaction = await Like.findOneAndUpdate(
       { user: userId, post: postId },
       { type },
@@ -69,7 +74,7 @@ export const getPostReactions = async (req, res) => {
     const reactions = await Like.find({ post: postId }).populate('user', 'username');
 
     if(!reactions) {
-        return res.status(400).json(new ApiError(400, 'No likes found for this post'));
+      return res.status(200).json(new ApiResponse(200, {}, 'No reactions yet'));
     }
 
     const grouped = reactions.reduce((acc, r) => {
@@ -81,5 +86,31 @@ export const getPostReactions = async (req, res) => {
   } catch (err) {
     console.error('something went wrong in getPostReactions:', err.message);
     return res.status(500).json(new ApiError(500, 'something went wrong'));
+  }
+};
+
+export const getUserReaction = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user._id;
+
+    if (!postId || !userId) {
+      return res.status(400).json(new ApiError(400, "UserId or PostId is missing"));
+    }
+
+    const userReaction = await Like.findOne({ user: userId, post: postId });
+
+    if (!userReaction) {
+      return res.status(200).json(
+        new ApiResponse(200, { reaction: null }, "User has not reacted to this post")
+      );
+    }
+
+    return res.status(200).json(
+      new ApiResponse(200, { reaction: userReaction.type }, "User reaction fetched successfully")
+    );
+  } catch (err) {
+    console.error('Something went wrong in getUserReaction:', err.message);
+    return res.status(500).json(new ApiError(500, 'Something went wrong'));
   }
 };

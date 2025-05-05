@@ -5,6 +5,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import cloudinary from "../config/cloudinary.js";
 import path from "path";
 import mongoose from "mongoose";
+import User from "../models/user.model.js";
+import { buildUserPostsPipeline } from "../utils/AggregationPipeline.js";
 
 export const createPost = async (req, res) => {
   try {
@@ -44,82 +46,51 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const getUserPosts = async (req, res) => {
+export const getAuthUserPosts = async (req, res) => {
   try {
-    const user = req.user;
-    if (!user || !user._id) {
+    const userId = req.user?._id;
+
+    if (!userId) {
       return res.status(401).json(new ApiError(401, "Unauthorized"));
     }
 
-    const posts = await Post.aggregate([
-      {
-        $match: {
-          user_id: user._id,
-        },
-      },
-      {
-        $lookup: {
-          from: "comments",
-          localField: "_id",
-          foreignField: "post",
-          as: "comments",
-        },
-      },
-      {
-        $lookup: {
-          from: "likes",
-          localField: "_id",
-          foreignField: "post",
-          as: "likes",
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "user_id",
-          foreignField: "_id",
-          as: "userDetails",
-        },
-      },
-      {
-        $unwind: "$userDetails",
-      },
-      {
-        $addFields: {
-          commentsCount: {
-            $size: "$comments",
-          },
-          likesCount: {
-            $size: "$likes",
-          },
-          username: "$userDetails.username",
-          firstname: "$userDetails.firstname",
-          lastname: "$userDetails.lastname",
-          profilepic: "$userDetails.profilepic",
-          user_id: "$userDetails._id",
-          createdAt: "$createdAt",
-          updatedAt: "$updatedAt",
-        },
-      },
-      {
-        $sort: {
-          createdAt: -1,
-        },
-      },
-    ]);
+    const posts = await Post.aggregate(buildUserPostsPipeline(userId));
 
-    if (!posts || posts.length === 0) {
+    if (!posts.length) {
       return res.status(404).json(new ApiError(404, "No posts found"));
     }
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, posts, "Posts fetched successfully"));
+    return res.status(200).json(new ApiResponse(200, posts, "Posts fetched successfully"));
   } catch (error) {
-    console.error("error in getUserPosts", error.message);
-    return res
-      .status(500)
-      .json(new ApiError(500, "Something went wrong while fetching posts"));
+    console.error("getAuthUserPosts error:", error.message);
+    return res.status(500).json(new ApiError(500, "Error fetching posts"));
+  }
+};
+
+export const getUserPostsByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    if (!username?.trim()) {
+      return res.status(400).json(new ApiError(400, "Username is required"));
+    }
+
+    const user = await User.findOne({ username: username.toLowerCase() }).select("_id");
+
+    if (!user) {
+      return res.status(404).json(new ApiError(404, "User not found"));
+    }
+
+    const posts = await Post.aggregate(buildUserPostsPipeline(user._id));
+
+    if (!posts.length) {
+      return res.status(404).json(new ApiError(404, "No posts found for this user"));
+    }
+
+    return res.status(200).json(new ApiResponse(200, posts, "User posts fetched successfully"));
+  } catch (error) {
+    console.error("getUserPostsByUsername error:", error.message);
+    return res.status(500).json(new ApiError(500, "Error fetching user posts"));
   }
 };
 
@@ -168,68 +139,6 @@ export const deletePost = async (req, res) => {
     return res
       .status(500)
       .json(new ApiError(500, "Something went wrong while deleting post"));
-  }
-};
-
-export const getPostById = async (req, res) => {
-  try {
-    const { post_id } = req.params;
-    const user = req.user;
-
-    if (!user || !user._id) {
-      return res.status(401).json(new ApiError(401, "Unauthorized"));
-    }
-
-    const post = await Post.aggregate([
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(post_id),
-        },
-      },
-      {
-        $lookup: {
-          from: "comments",
-          localField: "_id",
-          foreignField: "post",
-          as: "comments",
-        },
-      },
-      {
-        $lookup: {
-          from: "likes",
-          localField: "_id",
-          foreignField: "post",
-          as: "likes",
-        },
-      },
-      {
-        $addFields: {
-          commentsCount: {
-            $size: "$comments",
-          },
-          likesCount: {
-            $size: "$likes",
-          },
-        },
-      },
-      {
-        $sort: {
-          createdAt: -1,
-        },
-      },
-    ]);
-    if (!post || post.length === 0) {
-      return res.status(404).json(new ApiError(404, "Post not found"));
-    }
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, post, "Post fetched successfully"));
-  } catch (error) {
-    console.error("error in getPostById", error.message);
-    return res
-      .status(500)
-      .json(new ApiError(500, "Something went wrong while fetching post"));
   }
 };
 

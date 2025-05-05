@@ -1,34 +1,19 @@
-export interface PostData {
-  _id: string;
-  user_id: string;
-  title: string;
-  text: string;
-  username: string;
-  content: string[];
-  likesCount: number;
-  commentsCount: number;
-  comments: string[];
-  // likes: string[];
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-export interface PostResponse {
-  success: boolean;
-  message: string;
-  data: PostData[];
-}
-
-export interface PostProps {
-  _id: string;
-  content: string[];
-  title: string;
-  author: string;
-  time: string;
-  likesCount: number;
-  commentsCount: number;
-  currentUserId: string;
-  comments: string[];
-  // likes: string[];
-}
+export type PostProps = {
+  post: {
+    _id: string;
+    title: string;
+    text: string;
+    content: string[]; // array of image URLs
+    likesCount: number;
+    commentsCount: number;
+    createdAt: string;
+    user_id: {
+      _id?: string;
+      name?: string;
+      username?: string;
+      profilePicture?: string;
+    };
+  };
+  onLike?: (postId: string) => void;
+  isLiked?: boolean;
+};

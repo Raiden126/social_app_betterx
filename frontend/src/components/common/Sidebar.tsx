@@ -1,4 +1,14 @@
-import { Home, Search, MessageCircle, Calendar, Bell, Mail, User, X } from 'lucide-react';
+import {
+  Home,
+  Search,
+  MessageCircle,
+  Calendar,
+  Bell,
+  Mail,
+  User,
+  X,
+  UserRoundSearch,
+} from "lucide-react";
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -14,13 +24,18 @@ const Sidebar = ({
   const location = useLocation();
 
   const menuItems = [
-    { name: 'Home', icon: <Home size={20} />, route: '/' },
-    { name: 'Explore', icon: <Search size={20} />, route: '/explore' },
-    { name: 'Discussions', icon: <MessageCircle size={20} />, route: '/discussion' },
-    { name: 'Events', icon: <Calendar size={20} />, route: '/events' },
-    { name: 'Notifications', icon: <Bell size={20} />, route: '/notification' },
-    { name: 'Messages', icon: <Mail size={20} />, route: '/messages' },
-    { name: 'Account', icon: <User size={20} />, route: '/account' },
+    { name: "Home", icon: <Home size={20} />, route: "/" },
+    { name: "Users", icon: <UserRoundSearch size={20} />, route: "/search-users" },
+    { name: "Explore", icon: <Search size={20} />, route: "/explore" },
+    {
+      name: "Discussions",
+      icon: <MessageCircle size={20} />,
+      route: "/discussion",
+    },
+    { name: "Events", icon: <Calendar size={20} />, route: "/events" },
+    { name: "Notifications", icon: <Bell size={20} />, route: "/notification" },
+    { name: "Messages", icon: <Mail size={20} />, route: "/messages" },
+    { name: "Account", icon: <User size={20} />, route: "/account" },
   ];
 
   useEffect(() => {

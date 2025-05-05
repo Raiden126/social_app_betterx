@@ -10,6 +10,8 @@ import Cookies from 'js-cookie';
 import NotFound from "./pages/NotFound";
 import HomePage from "./pages/home/HomePage";
 import AccountPage from "./pages/user/AccountPage";
+import SearchUsersPage from "./pages/searchusers/SearchUsersPage";
+import ViewProfilePage from "./pages/searchusers/ViewProfilePage";
 
 function App() {
   const accessToken = Cookies.get('accessToken'); // Read token
@@ -35,17 +37,28 @@ function App() {
             }
           />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route
-            path="/"
-            element={
-                <HomePage />            
-              }
-          />
+          <Route path="/" element={<HomePage />} />
           <Route
             path="/account"
-            element= {
+            element={
               <PrivateRoute>
                 <AccountPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/search-users"
+            element={
+              <PrivateRoute>
+                <SearchUsersPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/view-profile/:username"
+            element={
+              <PrivateRoute>
+                <ViewProfilePage />
               </PrivateRoute>
             }
           />

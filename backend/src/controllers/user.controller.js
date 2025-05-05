@@ -133,3 +133,19 @@ export const getAuthUserProfile = async (req, res) => {
       .json(new ApiError(500, 'Something went wrong, please try again'));
   }
 }
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({})
+      .where({ isVerified: true })
+      .where({ deletedAt: null })
+      .select(
+        "-password -__v -createdAt -updatedAt -otp -resetPasswordToken -refreshToken"
+      )
+      .sort({ createdAt: -1 });
+    return res.status(200).json(new ApiResponse(200, users, 'Users fetched successfully'));
+  } catch (error) {
+    console.log('error in getAllUsers', error.message);
+    return res.status(500).json(new ApiError(500, 'Something went wrong, please try again'));
+  }
+}
